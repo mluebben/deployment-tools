@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright 2022 Matthias Lübben <ml81@gmx.de>
+#
+
+# Small debugging script to check if we got the right priviliges
+#
+
+echo "Real ids:"
+echo "  uid:" $(id -ru)
+echo "  gid:" $(id -rg)
+echo
+echo "Effective ids:"
+echo "  euid:" $(id -u)
+echo "  egid:" $(id -g)
+echo
+echo "Groups:"
+echo "  " $(id -G)
+

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright 2022 Matthias Lübben <ml81@gmx.de>
+#
+
+usage() { 
+  echo "usage: deploy.sh -c <configuration> -i <release.zip>"
+  exit 0
+}
+
+CONFIGURATION=
+INPUT=
+
+while getopts "hc:i:" arg
+do
+  case $arg in
+    c)
+      CONFIGURATION=$OPTARG
+      ;;
+    i)
+      INPUT=$OPTARG
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -z "$INPUT" ]]
+then
+  usage
+  exit 1
+fi
+
+if [[ "$INPUT" = "-" ]]
+then
+  INPUT=$(mktemp /tmp/release.XXXXXX.zip)
+  cat - >$INPUT
+  echo "Created temporary file $INPUT"
+fi
+
+
+CONFIGURATION_ALNUM="$(echo $CONFIGURATION | sed -e 's/[^[:alnum:]]//g')"
+if [ "$CONFIGURATION" != "$CONFIGURATION_ALNUM" ] ; then
+  echo "configuration is invalid only alphanumerical characters are allowed."
+  exit 1
+fi
+
+
+# Run installer
+# check for /etc/deploy/installer/:configuration:
+# the install script will stop the service, extract zip, copy files from etc into extracted zip directory, move files into app/bin
+#
+
+INSTALLER=/etc/deploy/installer/${CONFIGURATION}
+if [[ -x "$INSTALLER" ]]
+then
+  echo "Run installer $INSTALLER"
+  $INSTALLER "$INPUT"
+fi
+

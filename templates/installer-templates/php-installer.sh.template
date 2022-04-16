@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright 2022 Matthias Lübben <ml81@gmx.de>
+#
+
+# Installtion script template for PHP applications
+#
+
+
+# This needs some real love, but it's a start :-)
+
+
+SCRIPT_PATH="`dirname \"$0\"`"
+
+# This comes from the command line argument 
+IMAGE_FILE=image.zip
+
+unzip $IMAGE_FILE
+

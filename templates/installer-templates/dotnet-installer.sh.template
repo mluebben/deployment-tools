@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright 2022 Matthias Lübben <ml81@gmx.de>
+#
+
+# Installtion script
+#
+
+
+# Manual configuration
+#
+SVC_NAME="your-awesome-service"
+
+
+# Determine installation directory
+#
+SCRIPT_FILE="$0"
+SCRIPT_PATH="`dirname \"$SCRIPT_FILE\"`"
+APP_PATH="$SCRIPT_PATH"
+
+
+# Print diagnostics
+#
+echo "Installer is $SCRIPT_FILE"
+
+
+# Abort if image file was not specified
+#
+
+IMAGE_FILE="$1"
+if [[ ! -f "$IMAGE_FILE" ]]
+then
+  echo "Image file '$IMAGE_FILE' not found"
+  exit 1
+fi
+
+
+# Create backup of image file
+#
+BACKUP_FILE=deployment-$(date +%Y%m%d-%H%M%S).zip
+cp "$IMAGE_FILE" "$APP_PATH/$BACKUP_FILE"
+
+
+# Stopping service
+#
+echo "Stopping service $SVC_NAME"
+systemctl stop "$SVC_NAME"
+sleep 3
+
+
+# Uninstall application
+#
+echo "Uninstall application"
+rm -rf "$APP_PATH/bin"/*
+
+
+# Unzip application
+#
+echo "Installing application"
+unzip -q "$IMAGE_FILE" -d "$APP_PATH/bin"
+
+
+# Copy configuration
+#
+echo "Configure application"
+cp -r "$APP_PATH/etc"/* "$APP_PATH/bin"
+
+
+# Starting service
+#
+echo "Starting service $SVC_NAME"
+systemctl start "$SVC_NAME"
+
